@@ -37,9 +37,12 @@ class RestaurantsController < ApplicationController
 
   def destroy
     @restaurant = Restaurant.find(params[:id])
-    @restaurant.destroy
-    flash[:notice] = 'Restaurant deleted successfully'
-
+    if user_signed_in? && current_user.restaurants.include?(@restaurant)
+      @restaurant.destroy
+      flash[:notice] = 'Restaurant deleted successfully'
+    else
+      flash[:error] = "You can only delete restaurants you have created"
+    end
     redirect_to '/restaurants'
   end
 

@@ -88,11 +88,21 @@ feature 'restaurants' do
   context 'deleting restaurants' do
     before { sign_up; list_KFC }
 
-    scenario "deleting a restaurant" do
+    scenario "when a user created it" do
       visit '/restaurants'
       click_link 'Delete KFC'
       expect(page).not_to have_content 'KFC'
       expect(page).to have_content 'Restaurant deleted successfully'
+    end
+
+    scenario "cannot be done when user didn't create it" do
+      click_link 'Sign out'
+      sign_up ("testy@mctestface.com")
+      visit '/restaurants'
+      click_link "Delete KFC"
+      expect(page).to have_content "KFC"
+      expect(page).to have_content "You can only delete restaurants you have created"
+      expect(current_path).to eq restaurants_path
     end
   end
 end
